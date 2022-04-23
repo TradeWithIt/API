@@ -1,8 +1,8 @@
 import Foundation
 
 public struct API: Codable, Equatable {
-    var http: String
-    var wss: String? = nil
+    public var http: String
+    public var wss: String? = nil
 }
 
 public protocol ApiEnvironment {
@@ -18,5 +18,5 @@ extension ApiEnvironment {
         return query
     }
 
-    func setHeaders(request: inout URLRequest) {}
+    public func setHeaders(request: inout URLRequest) {}
 }
