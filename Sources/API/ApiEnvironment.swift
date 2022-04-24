@@ -2,7 +2,12 @@ import Foundation
 
 public struct API: Codable, Equatable {
     public var http: String
-    public var wss: String? = nil
+    public var wss: String?
+    
+    public init(http: String, wss: String? = nil) {
+        self.http = http
+        self.wss = wss
+    }
 }
 
 public protocol ApiEnvironment {
