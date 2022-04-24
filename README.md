@@ -2,6 +2,21 @@
 
 Simple HTTP and WSS client build on top of Swift Foundation URLSesison.
 
+
+## Swift Package Manager
+
+The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the swift compiler.
+
+Once you have your Swift package set up, adding a dependency is as easy as adding it to the dependencies value of your Package.swift.
+
+```
+dependencies: [
+    .package(url: "https://github.com/TradeWithIt/API", branch: "main")
+]
+```
+
+## Usage 
+
 HTTP example:
 
 ```swift
