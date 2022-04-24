@@ -12,7 +12,6 @@ public typealias WebSocketClosure = (_ ws: WebSocket) -> Void
 public typealias WebSocketTextClosure = (_ ws: WebSocket,  _ text: String) -> Void
 public typealias WebSocketDataClosure = (_ ws: WebSocket,  _ data: Data) -> Void
 
-
 public class WebSocket: NSObject {
     private let session = URLSession(configuration: .default)
     private var webSocketTask: URLSessionWebSocketTask?

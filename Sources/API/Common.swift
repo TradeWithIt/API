@@ -34,31 +34,6 @@ extension Float: StringRepresentable {}
 
 extension Int: StringRepresentable {}
 
-public struct NumericString<Value: StringRepresentable>: Codable {
-    public var value: Value
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let string = try container.decode(String.self)
-
-        guard let value = Value(string) else {
-            throw DecodingError.dataCorruptedError(
-                in: container,
-                debugDescription: """
-                Failed to convert an instance of \(Value.self) from "\(string)"
-                """
-            )
-        }
-
-        self.value = value
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(value.description)
-    }
-}
-
 public enum Number: Codable, Hashable, CustomStringConvertible {
     public var percentDescription: String {
         return String(format: "%.2f%%", (self * 100).asDouble)
@@ -140,7 +115,7 @@ public enum Number: Codable, Hashable, CustomStringConvertible {
 // MARK: Number operators overload
 
 extension Number {
-    static func * (left: Number, right: Double) -> Number {
+    public static func * (left: Number, right: Double) -> Number {
         switch left {
         case .string(let string):
             if let double = Double(string) {
@@ -156,7 +131,7 @@ extension Number {
         }
     }
 
-    static func * (left: Number, right: Int) -> Number {
+    public static func * (left: Number, right: Int) -> Number {
         switch left {
         case .string(let string):
             if let double = Double(string) {
@@ -172,7 +147,7 @@ extension Number {
         }
     }
     
-    static func / (left: Number, right: Double) -> Number {
+    public static func / (left: Number, right: Double) -> Number {
         switch left {
         case .string(let string):
             if let double = Double(string) {
@@ -188,7 +163,7 @@ extension Number {
         }
     }
 
-    static func / (left: Number, right: Int) -> Number {
+    public static func / (left: Number, right: Int) -> Number {
         switch left {
         case .string(let string):
             if let double = Double(string) {
