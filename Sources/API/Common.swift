@@ -50,7 +50,7 @@ public enum Number: Codable, Hashable, CustomStringConvertible {
         }
     }
     
-    var asString: String {
+    public var asString: String {
         switch self {
         case .double(let double):
             let formatter = NumberFormatter()
@@ -63,7 +63,7 @@ public enum Number: Codable, Hashable, CustomStringConvertible {
         }
     }
     
-    var asDouble: Double {
+    public var asDouble: Double {
         switch self {
         case .string(let string):
             return Double(string) ?? .nan
@@ -74,7 +74,7 @@ public enum Number: Codable, Hashable, CustomStringConvertible {
         }
     }
     
-    var asInt: Int {
+    public var asInt: Int {
         switch self {
         case .string(let string):
             return Int(string) ?? .zero
