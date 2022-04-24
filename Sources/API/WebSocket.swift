@@ -17,7 +17,7 @@ public class WebSocket: NSObject {
     private var webSocketTask: URLSessionWebSocketTask?
     
     private var timer: RepeatingTimer?
-    private(set) var isConnected: Bool = false
+    public private(set) var isConnected: Bool = false
     private var pingInterval: Int? = nil
     private var onTextClosure: WebSocketTextClosure?
     private var onDataClosure: WebSocketDataClosure?
