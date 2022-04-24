@@ -18,7 +18,7 @@ extension ClientProtocol {
         }
 
         var request = URLRequest(url: url)
-        request.setValue("trade-with-me/1.0", forHTTPHeaderField: "User-Agent")
+        request.setValue(environment.api.userAgent, forHTTPHeaderField: "User-Agent")
         return request
     }
 }

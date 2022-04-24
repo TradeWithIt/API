@@ -3,6 +3,7 @@ import Foundation
 public struct API: Codable, Equatable {
     public var http: String
     public var wss: String?
+    public var userAgent: String = "trade-with-it/1.0"
     
     public init(http: String, wss: String? = nil) {
         self.http = http

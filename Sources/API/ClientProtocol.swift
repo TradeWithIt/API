@@ -97,7 +97,7 @@ extension ClientProtocol {
         request.httpMethod = method.rawValue
         environment.setHeaders(request: &request)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("trade-with-me/1.0", forHTTPHeaderField: "User-Agent")
+        request.setValue(environment.api.userAgent, forHTTPHeaderField: "User-Agent")
         request.httpBody = httpBody
         request.timeoutInterval = timeoutInterval
 
