@@ -102,6 +102,7 @@ extension ClientProtocol {
         request.timeoutInterval = timeoutInterval
 
         let (data, response) = try await urlSession.data(for: request)
+        guard !data.isEmpty else { throw RequestError.emptyData }
         guard let httpResponse = response as? HTTPURLResponse, 200 ..< 300 ~= httpResponse.statusCode else {
             print("🛑", (response as? HTTPURLResponse)?.statusCode ??  -1, String(data: data, encoding: .utf8) ?? "")
             throw RequestError.error((response as? HTTPURLResponse)?.statusCode ?? -1,

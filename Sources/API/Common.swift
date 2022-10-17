@@ -10,6 +10,7 @@ public struct EmptyResponse: Decodable {
 
 public enum RequestError: Error {
     case invalidURL
+    case emptyData
     case status(Int)
     case error(Int, ErrorMessage)
 }
