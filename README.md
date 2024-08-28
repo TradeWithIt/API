@@ -17,27 +17,126 @@ dependencies: [
 
 ## Usage 
 
+```swift
+import API
+
+let client = MyAPIClient(baseURL: url)
+let response = try await client.login(googleToken: token)
+```
+
 HTTP example:
 
 ```swift
-    public func balance(coin: String? = nil) async throws -> BybitPublic<[String: BybitCoin]> {
-        return try await get("/v2/private/wallet/balance", searchParams: ["coin": coin])
+import API
+
+public struct MyAPIClient: API {
+    public var accessToken: String?
+    public var baseURL: URL
+    
+    public init(accessToken: String? = nil, baseURL: URL) {
+        self.accessToken = accessToken
+        self.baseURL = baseURL
     }
+    
+    public var defaultHeaders: [String : String] {
+        [
+            "Authorization": "Bearer \(accessToken ?? "")",
+            "Content-Type": "application/json"
+        ]
+    }
+}
 ```
 
-Websocket example:
+Request example:
 
 ```swift
-var request = URLRequest(url: url)
-try websocketPublic.connect(to: request, {[weak self] ws in
-    ws.onText { ws, text in
-        guard let self = self else { return }
-        self.updatePublicData(text, symbol: symbol, interval: self.interval, bybit: bybit)
+import API
 
+enum AuthenticationRequest: Request {
+    typealias Response = AccountResponse
+
+    case postMagicLink(email: String)
+    case getMagicLink(token: String)
+    case postAppleLogin(firstName: String?, lastName: String?, appleIdentityToken: String)
+    case postGoogleLogin(accessToken: String)
+
+    var path: String {
+        switch self {
+        case .postMagicLink:
+            return "/auth/magic-link"
+        case .getMagicLink:
+            return "/auth/magic-link"
+        case .postAppleLogin:
+            return "/auth/apple"
+        case .postGoogleLogin:
+            return "/auth/google"
+        }
     }
-    ws.onClose { ws in }
-    self?.subscribePublicWss()
-})
+
+    var method: HTTPMethod {
+        switch self {
+        case .postMagicLink, .postAppleLogin, .postGoogleLogin:
+            return .post
+        case .getMagicLink:
+            return .get
+        }
+    }
+
+    var body: Data? {
+        do {
+            switch self {
+            case .postMagicLink(let email):
+                return try jsonEncoder.encode(MagicLinkRequestBody(email: email))
+            case .postAppleLogin(let firstName, let lastName, let appleIdentityToken):
+                return try jsonEncoder.encode(SIWARequestBody(firstName: firstName, lastName: lastName, appleIdentityToken: appleIdentityToken))
+            case .postGoogleLogin(let accessToken):
+                return try jsonEncoder.encode(GoogleRequestBody(accessToken: accessToken))
+            default:
+                return nil
+            }
+        } catch {
+            print("🔴", error)
+        }
+        return nil
+    }
+}
+
+// MARK: Endpoints
+
+extension MyAPIClient {
+    public func requestLink(email: String) async throws {
+        _ = try await sendRequest(AuthenticationRequest.postMagicLink(email: email))
+    }
+    
+    public func login(token: String) async throws -> AccountResponse {
+        try await sendRequest(AuthenticationRequest.getMagicLink(token: token))
+    }
+    
+    public func login(firstName: String?, lastName: String?, appleIdentityToken: String) async throws -> AccountResponse {
+        try await sendRequest(AuthenticationRequest.postAppleLogin(firstName: firstName, lastName: lastName, appleIdentityToken: appleIdentityToken))
+    }
+    
+    public func login(googleToken: String) async throws -> AccountResponse {
+        try await sendRequest(AuthenticationRequest.postGoogleLogin(accessToken: googleToken))
+    }
+}
+
+// MARK: Types
+
+struct MagicLinkRequestBody: Encodable {
+    let email: String
+}
+
+struct SIWARequestBody: Encodable {
+    let firstName: String?
+    let lastName: String?
+    let appleIdentityToken: String
+}
+
+struct GoogleRequestBody: Encodable {
+    let accessToken: String
+}
+
 ```
 
 It comes with some basic utilities which make life easier.
